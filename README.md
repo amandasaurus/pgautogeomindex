@@ -21,7 +21,7 @@ an index like this:
 First run your rendering on your database to generate some slow queries in the
 log.
 
-    pgautoindex -i /path/to/slow/query.log
+    pgautogeomindex -i /path/to/slow/query.log
 
 The output is the SQL queries to run. It needs to connect to the database to
 perform `EXPLAIN` queries, specify the database with `-d`/`--database` and/or
