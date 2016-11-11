@@ -42,6 +42,9 @@ def get_filters_from_plan(plan, geom_column):
         if filter != '':
             table = plan['Relation Name']
             results.append((filter, table))
+    elif plan['Node Type'] in ('Values Scan',):
+        # ignore this it's just going over a (VALUES (...)) thing
+        pass
     elif 'Plans' in plan:
         for sub_plan in plan['Plans']:
             results.extend(get_filters_from_plan(sub_plan, geom_column))
