@@ -6,10 +6,11 @@ import re
 
 def rm_geom_condition(geom_column, filter):
     # There are many places the geom filter could be.
-    # Either "X AND geom && blah AND Y", which needs to become "X AND Y"
-    # "geom && blah AND Y" -> "Y"
-    # "X AND geom && blah" -> "X"
-    # "geom && blah" -> ""
+    # Either "X AND geom && BBOX AND Y", which needs to become "X AND Y"
+    # "geom && BBOX AND Y" -> "Y"
+    # "X AND geom && BBOX" -> "X"
+    # "geom && BBOX" -> ""
+    # _st_distance(geom, WKB) op number ( distance queries)
     # So we do a series of replacements, which should catch all cases, and not
     # overlap, only one of each one should work on each input string, we need
     # to include all 4 to ensure all 4 cases are covered
@@ -18,6 +19,8 @@ def rm_geom_condition(geom_column, filter):
     new_filter = re.sub(" AND \({} && '[0-9A-F]+'::geometry\)".format(geom_column), "", new_filter)
 
     new_filter = re.sub("\({} && '[0-9A-F]+'::geometry\)".format(geom_column), "", new_filter)
+
+    new_filter = re.sub("AND \(_st_distance\(\({col}\)::geography, '[0-9A-F]+'::(geometry|geography), '[0-9]+'::double precision, true\) < '[0-9]+'::double precision\)".format(col=geom_column), "", new_filter)
     new_filter = new_filter.strip()
     return new_filter
 
