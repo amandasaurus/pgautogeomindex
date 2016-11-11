@@ -50,10 +50,9 @@ def get_filters_from_plan(plan, geom_column):
             results.extend(get_filters_from_plan(sub_plan, geom_column))
 
     else:
-        raise NotImplementedError
+        raise NotImplementedError(plan)
     
     # TODO remove the geom column filter
-
 
     return results
 
