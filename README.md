@@ -41,6 +41,28 @@ the user to connect as with `-U`/`--user`.
       -i INPUT, --input INPUT
                             Slow query log
 
+# Finding all your slow queries
+
+
+Change PostgreSQL to log all SQL queries
+
+    sudo -u postgres psql -d gis -c "ALTER SYSTEM SET log_min_duration_statement = 0;"
+    sudo killall --signal SIGHUP postgres
+
+In another window start tailing the current log file and save it somewhere
+
+    tail -n 0 -f /var/log/postgresql/postgresql-9.6-main.log | tee slowqueries
+
+Then generate some tiles. I suggest picking a very small area, and generating
+all tiles from zoom 0 to 19, which will hit all your zoom levels
+
+    npm install tilelive
+    ./node_modules/.bin/tilelive-copy "carto+file://./project.mml" "mbtiles://./dont_care.mbtiles" --bounds="-6.2668,53.3439,-6.2586,53.3499" --minzoom 0 --maxzoom 19
+
+And reset the logging to your default
+
+    sudo -u postgres psql -d gis -c "ALTER SYSTEM SET log_min_duration_statement TO DEFAULT;"
+    sudo killall --signal SIGHUP postgres
 
 ## Bugs
 
