@@ -114,6 +114,7 @@ def main():
                     added_queries.add(add_index_query)
 
         except Exception as e:
+            print sql
             print repr(e)
 
     for table_name in tables_to_analyze:
