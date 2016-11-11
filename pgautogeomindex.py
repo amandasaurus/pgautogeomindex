@@ -78,19 +78,28 @@ def main():
 
     # read in input
     if args.input:
-        input_fp = open(args.input)
-
-    slow_query_log = (x for x in input_fp if " duration: " in x)
-    split = ( re.split(" duration: [0-9]+\.[0-9]+ ms  execute <unnamed>: ", x, maxsplit=1) for x in slow_query_log)
-    queries = (x[1] for x in split if len(x) == 2)
+        with open(args.input) as fp:
+            log_file = fp.read()
 
     geom_column = args.geom_column
     tables_to_analyze = set()
     added_queries = set()
 
-    for sql in queries:
-        try:
+    log_regex = re.compile(r"""(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d .{,6} \[[^\]]{,20}\] \w{,10}@\w{,10} LOG:  (?:duration: [0-9]{,15}\.[0-9]{,6} ms  (?:execute <\w{,10}>|statement):)?)""", re.DOTALL)
 
+    splits = log_regex.split(log_file)
+
+    splits = splits[1:]   # empty one at start
+
+    splits = [(splits[i], splits[i+1]) for i in range(0, len(splits), 2)]  # group
+    for header, sql in splits:
+        if "duration" not in header:
+            continue
+
+        if any(sql.strip().upper().startswith(ignore) for ignore in ['BEGIN', 'ALTER ']):
+            continue
+
+        try:
             new_sql = "EXPLAIN (FORMAT JSON) {};".format(sql)
             cursor.execute(new_sql)
             res = cursor.fetchone()[0][0]['Plan']
