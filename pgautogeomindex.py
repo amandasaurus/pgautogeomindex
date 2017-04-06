@@ -27,8 +27,9 @@ def rm_geom_condition(geom_column, filter):
 
 def get_filters_from_plan(plan, geom_column):
     results = []
+
     if plan['Node Type'] == 'Seq Scan':
-        filter = rm_geom_condition(geom_column, plan['Filter'])
+        filter = rm_geom_condition(geom_column, plan.get('Filter', ''))
         if filter != '':
             table = plan['Relation Name']
             results.append((filter, table))
@@ -85,7 +86,7 @@ def main():
     tables_to_analyze = set()
     added_queries = set()
 
-    log_regex = re.compile(r"""(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d .{,6} \[[^\]]{,20}\] \w{,10}@\w{,10} LOG:  (?:duration: [0-9]{,15}\.[0-9]{,6} ms  (?:execute <\w{,10}>|statement):)?)""", re.DOTALL)
+    log_regex = re.compile(r"""(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d\d\d) .{,6} \[[^\]]{,20}\] \w{,10}@\w{,10} (?:LOG:  (?:duration: [0-9]{,15}\.[0-9]{,6} ms  (?:execute <\w{,10}>|statement):)?|ERROR|STATEMENT))""", re.DOTALL)
 
     splits = log_regex.split(log_file)
 
@@ -95,8 +96,10 @@ def main():
     for header, sql in splits:
         if "duration" not in header:
             continue
+        if "LOG: " not in header:
+            continue
 
-        if any(sql.strip().upper().startswith(ignore) for ignore in ['BEGIN', 'ALTER ']):
+        if any(sql.strip().upper().startswith(ignore) for ignore in ['BEGIN', 'ALTER ', 'SET ', 'ERROR ']):
             continue
 
         try:
