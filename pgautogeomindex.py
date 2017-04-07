@@ -89,7 +89,7 @@ def main():
 
     geom_column = args.geom_column
     tables_to_analyze = set()
-    added_queries = set()
+    queries = set()
 
     log_regex = re.compile(r"""(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d\d\d) .{,6} \[[^\]]{,20}\] \w{,10}@\w{,10} (?:LOG:  (?:duration: [0-9]{,15}\.[0-9]{,6} ms  (?:execute <\w{,10}>|statement):)?|ERROR|STATEMENT))""", re.DOTALL)
 
@@ -118,15 +118,17 @@ def main():
                 tables_to_analyze.add(table_name)
                 idx_suffix = str(abs(hash(filter)))[:8]
                 add_index_query = "CREATE INDEX {table}_idx{suffix} ON {table} USING GIST ({geom}) WHERE {filter};".format(table=table_name, suffix=idx_suffix, filter=filter, geom=geom_column)
-                if add_index_query not in added_queries:
-                    print add_index_query
-                    added_queries.add(add_index_query)
+                queries.add(add_index_query)
 
         except Exception as e:
             print sql
             print repr(e)
 
-    for table_name in tables_to_analyze:
+    queries = sorted(queries)
+    for query in queries:
+        print query
+
+    for table_name in sorted(tables_to_analyze):
         print "ANALYZE {};".format(table_name)
 
 
