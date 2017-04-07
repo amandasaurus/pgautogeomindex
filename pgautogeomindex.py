@@ -19,6 +19,7 @@ def rm_geom_condition(geom_column, filter):
     new_filter = re.sub(" AND \({} && '[0-9A-F]+'::geometry\)".format(geom_column), "", new_filter)
 
     new_filter = re.sub("\({} && '[0-9A-F]+'::geometry\)".format(geom_column), "", new_filter)
+    new_filter = re.sub("\(st_boundary\({}\) && '[0-9A-F]+'::geometry\)".format(geom_column), "", new_filter)
 
     new_filter = re.sub("AND \(_st_distance\(\({col}\)::geography, '[0-9A-F]+'::(geometry|geography), '[0-9]+'::double precision, true\) < '[0-9]+'::double precision\)".format(col=geom_column), "", new_filter)
     new_filter = new_filter.strip()
