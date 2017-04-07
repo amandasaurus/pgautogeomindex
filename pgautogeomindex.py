@@ -78,6 +78,10 @@ def main():
     conn = psycopg2.connect(**connect_args)
     cursor = conn.cursor()
 
+    # Store the list of pg_catalog tables
+    cursor.execute("select table_name from information_schema.tables where table_schema = 'pg_catalog';")
+    pg_catalog_tables = set([x[0] for x in cursor.fetchall()])
+
     # read in input
     if args.input:
         with open(args.input) as fp:
@@ -110,6 +114,8 @@ def main():
             #pprint(res)
 
             for (filter, table_name) in get_filters_from_plan(res, geom_column):
+                if table_name in pg_catalog_tables:
+                    continue
                 tables_to_analyze.add(table_name)
                 idx_suffix = str(abs(hash(filter)))[:8]
                 add_index_query = "CREATE INDEX {table}_idx{suffix} ON {table} USING GIST ({geom}) WHERE {filter};".format(table=table_name, suffix=idx_suffix, filter=filter, geom=geom_column)
