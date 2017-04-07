@@ -56,7 +56,7 @@ In another window start tailing the current log file and save it somewhere
 Then generate some tiles. I suggest picking a very small area, and generating
 all tiles from zoom 0 to 19, which will hit all your zoom levels
 
-    npm install tilelive
+    npm install tilelive tilelive-carto mbtiles
     ./node_modules/.bin/tilelive-copy "carto+file://./project.mml" "mbtiles://./dont_care.mbtiles" --bounds="-6.2668,53.3439,-6.2586,53.3499" --minzoom 0 --maxzoom 19
 
 And reset the logging to your default
