@@ -111,7 +111,6 @@ def main():
             new_sql = "EXPLAIN (FORMAT JSON) {};".format(sql)
             cursor.execute(new_sql)
             res = cursor.fetchone()[0][0]['Plan']
-            #pprint(res)
 
             for (filter, table_name) in get_filters_from_plan(res, geom_column):
                 if table_name in pg_catalog_tables:
