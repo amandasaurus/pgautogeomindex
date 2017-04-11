@@ -64,6 +64,9 @@ def main():
     parser.add_argument('-d', '--database', type=str, help="PostgreSQL database name", default="gis")
     parser.add_argument('-U', '--user', type=str, required=False, help="PostgreSQL database user")
 
+    parser.add_argument('--analyze', action="store_true", help="Include ANALYZE statements afterwards (default)")
+    parser.add_argument('--no-analyze', action="store_false", dest="analyze", help="Don't include ANALYZE statements afterwards")
+
     parser.add_argument('-c', '--geom-column', type=str, required=False, help="Geometry column name", default="way")
     parser.add_argument('-i', '--input', metavar="FILENAME", type=str, required=True, help="Slow query log")
 
@@ -128,8 +131,9 @@ def main():
     for query in queries:
         print query
 
-    for table_name in sorted(tables_to_analyze):
-        print "ANALYZE {};".format(table_name)
+    if args.analyze:
+        for table_name in sorted(tables_to_analyze):
+            print "ANALYZE {};".format(table_name)
 
 
 
