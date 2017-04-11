@@ -67,6 +67,9 @@ def main():
     parser.add_argument('--analyze', action="store_true", help="Include ANALYZE statements afterwards (default)")
     parser.add_argument('--no-analyze', action="store_false", dest="analyze", help="Don't include ANALYZE statements afterwards")
 
+    parser.add_argument('--include-if-not-exists', action="store_true", default=True, help="Include IF NOT EXISTS clause on index creation (default)")
+    parser.add_argument('--no-include-if-not-exists', action="store_false", dest="include_if_not_exists", help="Don't include IF NOT EXISTS clause")
+
     parser.add_argument('-c', '--geom-column', type=str, required=False, help="Geometry column name", default="way")
     parser.add_argument('-i', '--input', metavar="FILENAME", type=str, required=True, help="Slow query log")
 
@@ -120,7 +123,8 @@ def main():
                     continue
                 tables_to_analyze.add(table_name)
                 idx_suffix = str(abs(hash(filter)))[:8]
-                add_index_query = "CREATE INDEX {table}_idx{suffix} ON {table} USING GIST ({geom}) WHERE {filter};".format(table=table_name, suffix=idx_suffix, filter=filter, geom=geom_column)
+                if_not_exists = " IF NOT EXISTS" if args.include_if_not_exists else ""
+                add_index_query = "CREATE INDEX{if_not_exists} {table}_idx{suffix} ON {table} USING GIST ({geom}) WHERE {filter};".format(table=table_name, suffix=idx_suffix, filter=filter, geom=geom_column, if_not_exists=if_not_exists)
                 queries.add(add_index_query)
 
         except Exception as e:
