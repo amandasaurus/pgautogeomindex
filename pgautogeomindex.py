@@ -124,7 +124,7 @@ def main():
                 tables_to_analyze.add(table_name)
                 idx_suffix = str(abs(hash(filter)))[:8]
                 if_not_exists = " IF NOT EXISTS" if args.include_if_not_exists else ""
-                add_index_query = "CREATE INDEX{if_not_exists} {table}_idx{suffix} ON {table} USING GIST ({geom}) WHERE {filter};".format(table=table_name, suffix=idx_suffix, filter=filter, geom=geom_column, if_not_exists=if_nt_exists)
+                add_index_query = "CREATE INDEX{if_not_exists} {table}_idx{suffix} ON {table} USING GIST ({geom}) WHERE {filter};".format(table=table_name, suffix=idx_suffix, filter=filter, geom=geom_column, if_not_exists=if_not_exists)
                 queries.add(add_index_query)
 
         except Exception as e:
