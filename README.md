@@ -72,5 +72,5 @@ output was, and may have made mistakes. Bug reports are welcome.
 
 ## Copyright
 
-Copyright 2016 Rory McCann <rory@technomancy.org>. Licenced under the GNU Affero GPL
+Copyright 2016, 2021 Amanda McCann <amanda@technomancy.org>. Licenced under the GNU Affero GPL
 v3 (or later). See the file `LICENCE` for more.

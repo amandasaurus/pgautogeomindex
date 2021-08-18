@@ -3,8 +3,8 @@ from setuptools import setup
 setup(
     name="pgautogeomindex",
     version="0.11.0",
-    author="Rory McCann",
-    author_email="rory@technomancy.org",
+    author="Amanda McCann",
+    author_email="amanda@technomancy.org",
     py_modules=['pgautogeomindex'],
     platforms=['any',],
     license = 'GPLv3+',
