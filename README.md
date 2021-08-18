@@ -51,7 +51,7 @@ Change PostgreSQL to log all SQL queries
 
 In another window start tailing the current log file and save it somewhere
 
-    tail -n 0 -f /var/log/postgresql/postgresql-9.6-main.log | tee slowqueries
+    tail -n 0 -f /var/log/postgresql/postgresql-*-main.log | tee slowqueries
 
 Then generate some tiles. I suggest picking a very small area, and generating
 all tiles from zoom 0 to 19, which will hit all your zoom levels
