@@ -128,16 +128,16 @@ def main():
                 queries.add(add_index_query)
 
         except Exception as e:
-            print sql
-            print repr(e)
+            print(sql)
+            print(repr(e))
 
     queries = sorted(queries)
     for query in queries:
-        print query
+        print(query)
 
     if args.analyze:
         for table_name in sorted(tables_to_analyze):
-            print "ANALYZE {};".format(table_name)
+            print("ANALYZE {};".format(table_name))
 
 
 
